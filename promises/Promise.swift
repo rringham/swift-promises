@@ -30,6 +30,9 @@ class Promise {
     // An array of callbacks (Void -> Void) to iterate through at resolve time.
     var pending: (() -> ())[] = []
     
+    // A callback to call when we're completely done.
+    var done: (() -> ()) = {}
+    
     // A callback to invoke in the event of failure.
     var fail: (() -> ()) = {}
     
@@ -60,6 +63,7 @@ class Promise {
                 fail()
                 return
             }
+            done()
         }
         return resolve
     }
@@ -106,5 +110,13 @@ class Promise {
     func fail(fail: (() -> ())) -> Promise {
         self.fail = fail
         return self
+    }
+    
+    // Done method.
+    //
+    // This lets us specify a done() callback to be invoked at the end of a set
+    // of then() clauses (provided the promise hasn't been rejected).
+    func done(done: (() -> ())) -> () {
+        self.done = done
     }
 }

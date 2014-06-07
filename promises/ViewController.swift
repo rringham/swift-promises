@@ -43,7 +43,10 @@ class ViewController: UIViewController {
         }).fail({
             // alert the user that their file upload failed miserably
             println("all is lost. accept defeat.")
-        })        
+        }).done({
+            // we're done!
+            println("all done!")
+        })
         
         //
         // Example #2
@@ -58,6 +61,9 @@ class ViewController: UIViewController {
         }).fail({
             // alert the user that their file upload failed miserably
             println("all is lost. accept defeat.")
+        }).done({
+            // we're done!
+            println("all done!")
         })
     }
     
