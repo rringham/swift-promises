@@ -26,7 +26,11 @@
 
 import Foundation
 
-class Promise {
+protocol Finishable {
+    func done(done: (() -> ())) -> ()
+}
+
+class Promise : Finishable {
     // An array of callbacks (Void -> Void) to iterate through at resolve time.
     var pending: (() -> ())[] = []
     
@@ -107,9 +111,18 @@ class Promise {
     // Fail method.
     //
     // This lets us chain a fail() method at the end of a set of then() clauses.
-    func fail(fail: (() -> ())) -> Promise {
+    //
+    // Note that unlike then(), this does not return a Promise object. It returns
+    // a "Finishable" object, which locks users down to only being able to specify
+    // a done() clause after a fail() clause. This is to prevent users from being
+    // able to do something like this:
+    //
+    // promise.then({}).fail({}).then({}).fail({})
+    //
+    func fail(fail: (() -> ())) -> Finishable {
         self.fail = fail
-        return self
+        let finishablePromise : Finishable = self
+        return finishablePromise
     }
     
     // Done method.
